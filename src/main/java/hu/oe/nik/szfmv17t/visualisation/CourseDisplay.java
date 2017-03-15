@@ -1,5 +1,6 @@
 package hu.oe.nik.szfmv17t.visualisation;
 
+import hu.oe.nik.szfmv17t.Main;
 import hu.oe.nik.szfmv17t.environment.domain.World;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldVisualisation;
@@ -17,11 +18,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class CourseDisplay {
+public class CourseDisplay implements Runnable{
 
 	private static final Logger logger = LogManager.getLogger();
 	private JFrame frame = new JFrame("OE NIK Automated Car Project");
 	private JPanel hmiJPanel;
+	private Drawer drawer;
 
 	public void refreshFrame() {
 		frame.invalidate();
@@ -32,13 +34,12 @@ public class CourseDisplay {
 
 	public void init(IWorldVisualisation world){
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		//Graphics g=Drawer.getDrawer(world,Main.worldHeight,Main.worldWidth).getComposer().composeFrame();
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 
 		JPanel worldObjectsJPanel = new JPanel() {
 					  private static final long serialVersionUID = 1L;
-
 					  public void paintComponent(Graphics g) {
 
 						  for (IWorldObject object : world.getWorld()) {
@@ -55,15 +56,17 @@ public class CourseDisplay {
 						  }
 					  }
 				  };
-
+		worldObjectsJPanel.setSize(340,400);
 		mainPanel.add(worldObjectsJPanel,BorderLayout.CENTER);
+
 		hmiJPanel = getSmiJPanel();
 		mainPanel.add(hmiJPanel, BorderLayout.SOUTH);
 
 		//Solve the duplicated key listener
 		//addSmiKeyEventListenerToFrame();
 
-		frame.setSize(world.getWidth(), world.getHeight());
+		frame.setSize(world.getWidth()/2, world.getHeight()/2);
+		frame.setSize(800,600);
 		frame.add(mainPanel);
 		frame.validate();
 		frame.setVisible(true);
@@ -82,6 +85,21 @@ public class CourseDisplay {
 			frame.addKeyListener(HmiJPanel.getHmi());
 		}else{
 			logger.error("JFrame frame or HmiJPanel.getHmi() returned null");
+		}
+	}
+
+	@Override
+	public void run() {
+		int refreshRate=1000/Main.FPS;
+		while (true)
+		{
+			try {
+				Thread.sleep(refreshRate);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			drawer.getComposer().composeFrame();
+			refreshFrame();
 		}
 	}
 }
