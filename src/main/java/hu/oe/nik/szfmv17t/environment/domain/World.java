@@ -13,6 +13,10 @@ public class World implements IWorldVisualisation {
 	private int height = 0;
 	private List<IWorldObject> worldObjects = new ArrayList<>();
         private XmlParser xmlParser;
+        public void updateWorld()
+        {
+            
+        }
 
 	public void updateWorld()
     {
