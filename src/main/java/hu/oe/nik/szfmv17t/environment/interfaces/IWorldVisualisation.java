@@ -7,6 +7,6 @@ import java.util.List;
  */
 public interface IWorldVisualisation {
     List<IWorldObject> getWorld();
-    int getWidth();
-    int getHeight();
+    int getWidth(); 
+    int getHeight(); 
 }
