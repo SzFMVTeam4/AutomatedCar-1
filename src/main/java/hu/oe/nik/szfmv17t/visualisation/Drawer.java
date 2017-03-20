@@ -62,29 +62,25 @@ public class Drawer implements IWorldVisualization {
 
         BorderLayout layout = (BorderLayout)mainPanel.getLayout();
         mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));;
-        FrameComposer fc = getComposer(world);
-        fc.setCameraSize(worldObjectsPanel.getWidth(),worldObjectsPanel.getHeight());
-        List<IWorldObject> toDraw=fc.composeFrame();
+        List<IWorldObject> toDraw=getComposer(world).composeFrame();
 
         worldObjectsPanel = new JPanel() {
             private static final long serialVersionUID = 1L;
             public void paintComponent(Graphics g) {
                 int t2=0;
                 BufferedImage image;
-                Graphics2D g2d=(Graphics2D)g.create();
                 for (IWorldObject object : toDraw) {
                     // draw objects
                     image = worldImages.get(t2++);
+                    Graphics2D g2d=(Graphics2D)g.create();
+                    g2d.rotate(object.getAxisAngle()+Math.PI/2,object.getCenterX(),object.getCenterY());
                     int segedx=((int)(object.getCenterX()-object.getWidth()/2));
-                    int segedy=((int)(object.getCenterY()-object.getHeight()/2));
+                    int segedy=((int)(object.getCenterY()-object.getHeight()/2)+t);
                     //DEBUG OVERLAY
                     PutDebugInformationOnImage(image, object);
-                    AffineTransform transform = new AffineTransform();
-                    transform.translate(segedx, segedy);
-                    transform.rotate(object.getAxisAngle()+Math.PI/2);
-                    g2d.drawImage(image,transform, null);
+                    g2d.drawImage(image, segedx, segedy, null);
+                    g2d.dispose();
                 }
-                g2d.dispose();
                 t+=5;
             }
         };
