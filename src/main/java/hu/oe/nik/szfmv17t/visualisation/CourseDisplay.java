@@ -19,7 +19,7 @@ public class CourseDisplay implements Runnable{
 	private JPanel mainPanel;
 	private JPanel worldObjectsJPanel;
 	//private Drawer drawer;
-	private IWorldVisualisation world;
+	private World world;
 	private BufferStrategy strategy;
 
 	public void refreshFrame() {
