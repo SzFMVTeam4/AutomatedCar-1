@@ -1,5 +1,6 @@
 package hu.oe.nik.szfmv17t.visualisation;
 
+import hu.oe.nik.szfmv17t.Main;
 import hu.oe.nik.szfmv17t.environment.domain.World;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.visualisation.interfaces.IWorldVisualization;
@@ -8,9 +9,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.*;
 import java.util.List;
 
@@ -36,7 +40,6 @@ public class Drawer implements IWorldVisualization {
     private static ArrayList <BufferedImage> worldImages;
     private Drawer(World world)
     {}
-
     public static Drawer getDrawer(World world) throws IOException {
         if (instance==null) {
             worldImages=new ArrayList<BufferedImage>();
@@ -53,37 +56,31 @@ public class Drawer implements IWorldVisualization {
     {
         return FrameComposer.getComposer(world);
     }
-
     private static int t=0;
     public void DrawFrametoPanel(JPanel worldObjectsPanel, World world, JPanel mainPanel)
     {
+
         BorderLayout layout = (BorderLayout)mainPanel.getLayout();
         mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));;
-        FrameComposer fc = getComposer(world);
-        fc.setCameraSize(worldObjectsPanel.getWidth(),worldObjectsPanel.getHeight());
-        List<IWorldObject> toDraw=fc.composeFrame();
+        List<IWorldObject> toDraw=getComposer(world).composeFrame();
 
         worldObjectsPanel = new JPanel() {
             private static final long serialVersionUID = 1L;
             public void paintComponent(Graphics g) {
                 int t2=0;
                 BufferedImage image;
-                Graphics2D g2d=(Graphics2D)g.create();
                 for (IWorldObject object : toDraw) {
                     // draw objects
                     image = worldImages.get(t2++);
-
+                    Graphics2D g2d=(Graphics2D)g.create();
+                    g2d.rotate(object.getAxisAngle()+Math.PI/2,object.getCenterX(),object.getCenterY());
                     int segedx=((int)(object.getCenterX()-object.getWidth()/2));
                     int segedy=((int)(object.getCenterY()-object.getHeight()/2)+t);
-
-                    PutDebugInformationOnImage(image, object);
-                    AffineTransform transform = new AffineTransform();
-                    transform.translate(segedx, segedy);
-                    transform.rotate(object.getAxisAngle()+Math.PI/2);
                     //DEBUG OVERLAY
-                    g2d.drawImage(image,transform, null);
+                    PutDebugInformationOnImage(image, object);
+                    g2d.drawImage(image, segedx, segedy, null);
+                    g2d.dispose();
                 }
-                g2d.dispose();
                 t+=5;
             }
         };
