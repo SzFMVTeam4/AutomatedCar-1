@@ -2,7 +2,6 @@ package hu.oe.nik.szfmv17t.visualisation;
 
 import hu.oe.nik.szfmv17t.Main;
 import hu.oe.nik.szfmv17t.environment.domain.World;
-import hu.oe.nik.szfmv17t.environment.interfaces.IWorld;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 
 import java.awt.*;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import hu.oe.nik.szfmv17t.environment.interfaces.IWorldVisualisation;
 import hu.oe.nik.szfmv17t.environment.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +52,7 @@ public class CourseDisplay implements Runnable{
 		worldObjectsJPanel = new JPanel() {
 					  private static final long serialVersionUID = 1L;
 					  public void paintComponent(Graphics g) {
-						  for (IWorldObject object : world.getWorld()) {
+						  for (IWorldObject object : world.getWorldObjects()) {
 							  // draw objects
 							  BufferedImage image;
 
