@@ -1,18 +1,13 @@
 package hu.oe.nik.szfmv17t.visualisation;
 
-import hu.oe.nik.szfmv17t.environment.domain.World;
-import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldVisualisation;
 import hu.oe.nik.szfmv17t.environment.utils.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 
@@ -48,26 +43,22 @@ public class CourseDisplay implements Runnable{
 		worldObjectsJPanel = new JPanel() {
 					  private static final long serialVersionUID = 1L;
 					  public void paintComponent(Graphics g) {
-
-						  for (IWorldObject object : world.getWorld()) {
-
+						  /*for (IWorldObject object : world.getWorld()) {
 							  // draw objects
 							  BufferedImage image;
-
 							  g = strategy.getDrawGraphics();
 							  Graphics2D g2d=(Graphics2D)g.create();
 							  try {
 								  image = ImageIO.read(new File(ClassLoader.getSystemResource(object.getImageName()).getFile()));
-                                                                  int segedx=((int)(object.getCenterX()-object.getWidth()/2));
-                                                                  int segedy=((int)(object.getCenterY()-object.getHeight()/2));
-         								  g2d.drawImage(image,
-												  segedx, segedy, null);
+								  int segedx=((int)(object.getCenterX()-object.getWidth()/2));
+                                  int segedy=((int)(object.getCenterY()-object.getHeight()/2));
+								  g2d.drawImage(image,segedx, segedy, null);
 							  } catch (IOException e) {
 								  logger.error(e.getMessage());
 							  }
 							  g2d.dispose();
 							  g.dispose();
-						  }
+						  }*/
 					  }
 				  };
 		mainPanel.add(worldObjectsJPanel,BorderLayout.CENTER);
