@@ -44,6 +44,8 @@ public class Main {
 		while(true) {
 			try {
 				car.drive();
+				vis.refreshFrame();
+				w.updateWorld();
 				Thread.sleep(Config.CYCLE_PERIOD);
 			} catch (InterruptedException e) {
 				logger.error(e.getMessage());
