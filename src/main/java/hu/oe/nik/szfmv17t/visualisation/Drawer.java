@@ -2,6 +2,7 @@ package hu.oe.nik.szfmv17t.visualisation;
 
 import hu.oe.nik.szfmv17t.Main;
 import hu.oe.nik.szfmv17t.environment.domain.World;
+import hu.oe.nik.szfmv17t.environment.interfaces.IWorld;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.visualisation.interfaces.IWorldVisualization;
 
@@ -34,7 +35,7 @@ public class Drawer implements IWorldVisualization {
     private World world;
     @Override
     public List<IWorldObject> getWorld() {
-        return world.getWorldObjects();
+        return world.getWorld();
     }
     private static Drawer instance = null;
     private static ArrayList <BufferedImage> worldImages;
@@ -44,7 +45,7 @@ public class Drawer implements IWorldVisualization {
         if (instance==null) {
             worldImages=new ArrayList<BufferedImage>();
             instance = new Drawer(world);
-            for (IWorldObject object:world.getWorldObjects()) {
+            for (IWorldObject object:world.getWorld()) {
                 BufferedImage bimg = ImageIO.read(new File(ClassLoader.getSystemResource(object.getImageName()).getFile()));
                 worldImages.add(bimg);
             }
