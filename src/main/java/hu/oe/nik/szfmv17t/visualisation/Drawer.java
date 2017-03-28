@@ -5,7 +5,6 @@ import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldVisualisation;
 import hu.oe.nik.szfmv17t.environment.utils.Config;
 import hu.oe.nik.szfmv17t.visualisation.interfaces.IWorldVisualization;
-import hu.oe.nik.szfmv17t.visualisation.viewmodels.CameraObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,7 +13,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,24 +38,18 @@ public class Drawer implements IWorldVisualization {
     }
 
     private static Drawer instance = null;
-    private static HashMap<String, BufferedImage> worldImages;
+    private static ArrayList<BufferedImage> worldImages;
 
     private Drawer(IWorldVisualisation world) {
     }
 
     public static Drawer getDrawer(IWorldVisualisation world) throws IOException {
         if (instance == null) {
-            worldImages = new HashMap<>();
+            worldImages = new ArrayList<BufferedImage>();
             instance = new Drawer(world);
-
-            for (IWorldObject object : world.getWorld())
-            {
-                String imageName = object.getImageName();
-                if ( !worldImages.containsKey(imageName) )
-                {
-                    BufferedImage bufferedImage = ImageIO.read(new File(ClassLoader.getSystemResource(object.getImageName()).getFile()));
-                    worldImages.put(imageName, bufferedImage);
-                }
+            for (IWorldObject object : world.getWorld()) {
+                BufferedImage bimg = ImageIO.read(new File(ClassLoader.getSystemResource(object.getImageName()).getFile()));
+                worldImages.add(bimg);
             }
         }
         return instance;
@@ -75,18 +68,18 @@ public class Drawer implements IWorldVisualization {
         mainPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
         FrameComposer fc = getComposer(world);
         fc.setCameraSize(worldObjectsPanel.getWidth(), worldObjectsPanel.getHeight());
-        List<CameraObject> toDraw = fc.composeFrame();
-
+        List<IWorldObject> toDraw = fc.composeFrame();
         worldObjectsPanel = new JPanel() {
             private static final long serialVersionUID = 1L;
 
             public void paintComponent(Graphics g) {
+                int t2 = 0;
                 BufferedImage image;
                 Graphics2D g2d = (Graphics2D) g.create();
-                for (CameraObject object : toDraw) {
+                for (IWorldObject object : toDraw) {
                     // draw objects
-                    image = worldImages.get(object.getWorldObject().getImageName());
-                    g2d.drawImage(image, getObjectTransformation(calculateDrawCornerX(object), calculateDrawCornerY(object), object.getWorldObject()), null);
+                    image = worldImages.get(t2++);
+                    g2d.drawImage(image, getObjectTransformation(calculateDrawCornerX(object), calculateDrawCornerY(object), object), null);
                 }
             }
         };
@@ -120,38 +113,34 @@ public class Drawer implements IWorldVisualization {
         }
         return Double.MIN_VALUE;
     }
-    private double calculateDrawCornerY(CameraObject cameraObject)
+    private double calculateDrawCornerY(IWorldObject object)
     {
-        IWorldObject worldObject = cameraObject.getWorldObject();
         double drawCornerY=0;
-
-        if (Turn.class.isInstance(worldObject))
+        if (Turn.class.isInstance(object))
         {
-            double baseY=(cameraObject.getY()-(worldObject.getHeight()/2));
-            if (worldObject.getImageName()=="road_2lane_tjunctionright.png" || worldObject.getImageName()=="road_2lane_tjunctionleft.png")
+            double baseY=(object.getCenterY()-(object.getHeight()/2));
+            if (object.getImageName()=="road_2lane_tjunctionright.png" || object.getImageName()=="road_2lane_tjunctionleft.png")
                 drawCornerY=baseY;
             else
-                drawCornerY = (baseY - worldObject.getHeight());
+                drawCornerY = (baseY - object.getHeight());
         }
         else
-            drawCornerY = ((int)(cameraObject.getY() - worldObject.getHeight()/2)) ;
+            drawCornerY = ((int)(object.getCenterY()-object.getHeight()/2)) ;
         return drawCornerY/Config.SCALE;
     }
-    private double calculateDrawCornerX(CameraObject cameraObject)
+    private double calculateDrawCornerX(IWorldObject object)
     {
-        IWorldObject worldObject = cameraObject.getWorldObject();
         double drawCornerX=0;
-
-        if (Turn.class.isInstance(worldObject))
+        if (Turn.class.isInstance(object))
         {
-            double baseX=(cameraObject.getX()-(worldObject.getWidth()/2));
-            if (worldObject.getImageName()=="road_2lane_tjunctionright.png" || worldObject.getImageName()=="road_2lane_tjunctionleft.png")
-                drawCornerX = (baseX - worldObject.getWidth());
+            double baseX=(object.getCenterX()-(object.getWidth()/2));
+            if (object.getImageName()=="road_2lane_tjunctionright.png" || object.getImageName()=="road_2lane_tjunctionleft.png")
+                drawCornerX = (baseX - object.getWidth());
             else
-                drawCornerX = (baseX - Config.roadWidth) ;
+                drawCornerX = (baseX - 350) ;
         }
         else
-            drawCornerX = ((int) (cameraObject.getX() - worldObject.getWidth() / 2)) ;
+            drawCornerX = ((int) (object.getCenterX() - object.getWidth() / 2)) ;
         return drawCornerX/Config.SCALE;
     }
     private AffineTransform getObjectTransformation(double drawCornerX,double drawCornerY, IWorldObject object)
