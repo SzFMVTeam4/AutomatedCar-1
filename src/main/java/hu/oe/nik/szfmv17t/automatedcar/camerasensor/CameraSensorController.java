@@ -29,6 +29,9 @@ public class CameraSensorController extends SystemComponent {
     //relevans objektumok es a kiszamolt tavolsag eltarolasa
     private HashMap<IWorldObject, Double> cameraSensorStoredData;
 
+    private int counter = 0;
+    private int previousSize;
+
     public CameraSensorController(AutomatedCar car, World world) {
         this.car = car;
         this.cameraSensor = new CameraSensor(car);
@@ -41,11 +44,15 @@ public class CameraSensorController extends SystemComponent {
     @Override
     public void loop() {
         VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
+        counter++;
         fieldView = cameraSensor.getSensorFieldView(car);
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
         cameraSensorStoredData = getDataOfCameraSensor(car, relevantObjects);
-       // printOutInformation();
+        if (counter == 1 || previousSize != relevantObjects.size()) {
+            previousSize = relevantObjects.size();
+            printOutInformation();
+        }
     }
 
     @Override
@@ -74,11 +81,13 @@ public class CameraSensorController extends SystemComponent {
     }
 
     private void printOutInformation() {
+
         System.out.println("\nCamera Sensor relevant objects: ");
         for (Map.Entry<IWorldObject, Double> entry : cameraSensorStoredData.entrySet()) {
             System.out.println(entry.getKey().getImageName() + " X:" + entry.getKey().getCenterX() + " Y:" + entry.getKey().getCenterY());
             System.out.println("Distance from car: " + entry.getValue());
         }
         System.out.println("End Camera Sensor relevant objects: ");
+
     }
 }
