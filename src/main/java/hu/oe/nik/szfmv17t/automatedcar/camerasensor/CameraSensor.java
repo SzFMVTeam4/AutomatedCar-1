@@ -48,9 +48,6 @@ public class CameraSensor {
         addingOffsetDistanceInCoordinates = resizer.meterToCoordinate(addingOffsetDistanceInMeter);
     }
 
-    public CameraSensor() {
-    }
-
     public Triangle getSensorFieldView(AutomatedCar car) {
         centerPoint = calculateCenterPoint(car);
         leftPoint = calculateLeftCornerPoint(car, centerPoint);
@@ -59,15 +56,13 @@ public class CameraSensor {
         fieldViewCoordsX = collectCoordinatesForDrawing();
         fieldViewCoordsY = collectCoordinatesY();
         carDirectionAngle = car.getDirectionAngle();
-        //System.out.println(centerPoint.getX());
-
         return new Triangle(leftPoint, rightPoint, centerPoint, SensorType.Camera);
     }
 
     Point calculateLeftCornerPoint(AutomatedCar car, Point center) {
-        double leftUpperBaseX = center.getX() - addingOffsetDistanceInCoordinates;
-        double leftUpperBaseY = center.getY() - viewDistanceInCoordinates;
-        double[] coordinates = {leftUpperBaseX, leftUpperBaseY};
+        double leftUpperCornerBaseX = center.getX() - addingOffsetDistanceInCoordinates;
+        double leftUpperCornerBaseY = center.getY() - viewDistanceInCoordinates;
+        double[] coordinates = {leftUpperCornerBaseX, leftUpperCornerBaseY};
         double angleOfRotationInDeg = (360 - Math.toDegrees(car.getDirectionAngle()));
 
         AffineTransform.getRotateInstance(Math.toRadians(angleOfRotationInDeg), center.getX(), center.getY()).transform(coordinates, 0, coordinates, 0, 1);
@@ -78,10 +73,10 @@ public class CameraSensor {
     }
 
     Point calculateRightCornerPoint(AutomatedCar car, Point center) {
-        double rightUpperBaseX = center.getX() + addingOffsetDistanceInCoordinates;
-        double rightUpperBaseY = center.getY() - viewDistanceInCoordinates;
+        double rightUpperCornerBaseX = center.getX() + addingOffsetDistanceInCoordinates;
+        double rightUpperCornerBaseY = center.getY() - viewDistanceInCoordinates;
 
-        double[] coordinates = {rightUpperBaseX, rightUpperBaseY};
+        double[] coordinates = {rightUpperCornerBaseX, rightUpperCornerBaseY};
         double angleOfRotationInDeg = (360 - Math.toDegrees(car.getDirectionAngle()));
 
         AffineTransform.getRotateInstance(Math.toRadians(angleOfRotationInDeg), center.getX(), center.getY()).transform(coordinates, 0, coordinates, 0, 1);
@@ -127,20 +122,21 @@ public class CameraSensor {
         return result;
     }
 
-    private int [] collectCoordinatesForDrawing() {
+    private int[] collectCoordinatesForDrawing() {
+        //kirajzolashoz, Drawerben
         int[] xCoordinatesForDrawing = new int[3];
-        xCoordinatesForDrawing[0] = (int)centerPoint.getX();
-        xCoordinatesForDrawing[1] = (int)leftPoint.getX();
-        xCoordinatesForDrawing[2] =(int) rightPoint.getX();
+        xCoordinatesForDrawing[0] = (int) centerPoint.getX();
+        xCoordinatesForDrawing[1] = (int) leftPoint.getX();
+        xCoordinatesForDrawing[2] = (int) rightPoint.getX();
         return xCoordinatesForDrawing;
     }
 
     private int[] collectCoordinatesY() {
+        //kirajzolashoz, Drawerben
         int[] yCoordinatesForDrawing = new int[3];
-        yCoordinatesForDrawing[0] = (int)centerPoint.getY();
-        yCoordinatesForDrawing[1] = (int)leftPoint.getY();
-        yCoordinatesForDrawing[2] =(int) rightPoint.getY();
+        yCoordinatesForDrawing[0] = (int) centerPoint.getY();
+        yCoordinatesForDrawing[1] = (int) leftPoint.getY();
+        yCoordinatesForDrawing[2] = (int) rightPoint.getY();
         return yCoordinatesForDrawing;
     }
-
 }

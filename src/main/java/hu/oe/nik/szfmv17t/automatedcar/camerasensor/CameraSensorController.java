@@ -19,7 +19,6 @@ import java.util.Map;
  * Created by winifred on 2017.04.17..
  */
 public class CameraSensorController extends SystemComponent {
-
     private CameraSensor cameraSensor;
     private AutomatedCar car;
     private World world;
@@ -81,13 +80,11 @@ public class CameraSensorController extends SystemComponent {
     }
 
     private void printOutInformation() {
-
         System.out.println("\nCamera Sensor relevant objects: ");
         for (Map.Entry<IWorldObject, Double> entry : cameraSensorStoredData.entrySet()) {
             System.out.println(entry.getKey().getImageName() + " X:" + entry.getKey().getCenterX() + " Y:" + entry.getKey().getCenterY());
             System.out.println("Distance from car: " + entry.getValue());
         }
         System.out.println("End Camera Sensor relevant objects: ");
-
     }
 }
