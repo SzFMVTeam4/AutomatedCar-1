@@ -1,5 +1,6 @@
 package hu.oe.nik.szfmv17t.visualisation;
 
+import hu.oe.nik.szfmv17t.automatedcar.camerasensor.CameraSensor;
 import hu.oe.nik.szfmv17t.environment.domain.Turn;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldVisualisation;
@@ -35,6 +36,12 @@ public class Drawer implements IWorldVisualization {
 
     private IWorldVisualization world;
 
+    //Camera Sensor kirajzolasahoz
+    private Camera camera;
+    private int[] leftCornerOfFieldView;
+    private int[] rightCornerOfFieldView;
+    private int[] centerOfFieldView;
+
     @Override
     public List<IWorldObject> getWorld() {
         return world.getWorld();
@@ -44,6 +51,10 @@ public class Drawer implements IWorldVisualization {
     private static HashMap<String, BufferedImage> worldImages;
 
     private Drawer(IWorldVisualisation world) {
+        camera = new Camera();
+        centerOfFieldView = new int[]{CameraSensor.fieldViewCoordsX[0], CameraSensor.fieldViewCoordsY[0]};
+        leftCornerOfFieldView = new int[]{CameraSensor.fieldViewCoordsX[1], CameraSensor.fieldViewCoordsY[1]};
+        rightCornerOfFieldView = new int[]{CameraSensor.fieldViewCoordsX[2], CameraSensor.fieldViewCoordsY[2]};
     }
 
     public static Drawer getDrawer(IWorldVisualisation world) throws IOException {
@@ -51,11 +62,9 @@ public class Drawer implements IWorldVisualization {
             worldImages = new HashMap<>();
             instance = new Drawer(world);
 
-            for (IWorldObject object : world.getWorld())
-            {
+            for (IWorldObject object : world.getWorld()) {
                 String imageName = object.getImageName();
-                if ( !worldImages.containsKey(imageName) )
-                {
+                if (!worldImages.containsKey(imageName)) {
                     BufferedImage bufferedImage = ImageIO.read(new File(ClassLoader.getSystemResource(object.getImageName()).getFile()));
                     worldImages.put(imageName, bufferedImage);
                 }
@@ -78,6 +87,9 @@ public class Drawer implements IWorldVisualization {
         FrameComposer fc = getComposer(world);
         fc.setCameraSize(worldObjectsPanel.getWidth(), worldObjectsPanel.getHeight());
         List<CameraObject> toDraw = fc.composeFrame();
+        //CameraSensor-hoz adat
+        int panelWidth = worldObjectsPanel.getWidth();
+        int panelHeight = worldObjectsPanel.getHeight();
 
         worldObjectsPanel = new JPanel() {
             private static final long serialVersionUID = 1L;
@@ -90,105 +102,100 @@ public class Drawer implements IWorldVisualization {
                     IWorldObject wobject = object.getWorldObject();
                     WorldObjectState state = wobject.getState();
                     String imageName = wobject.getImageName();
-                    if(state == WorldObjectState.Damaged || state == WorldObjectState.Destroyed){
-                        if (!checkHashMap(imageName,state)){
+                    if (state == WorldObjectState.Damaged || state == WorldObjectState.Destroyed) {
+                        if (!checkHashMap(imageName, state)) {
                             try {
-                                insertIntoHashMap(wobject,state);
+                                insertIntoHashMap(wobject, state);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         }
                         String strippedImageName = StringUtil.removeExtension(imageName);
-                        image = worldImages.get(strippedImageName+"_"+state.toString()+".png");
-                    }
-                    else {
+                        image = worldImages.get(strippedImageName + "_" + state.toString() + ".png");
+                    } else {
                         image = worldImages.get(imageName);
                     }
                     g2d.drawImage(image, getObjectTransformation(calculateDrawCornerX(object), calculateDrawCornerY(object), object.getWorldObject()), null);
                 }
+                g2d.drawPolygon(setPolygon(g2d, panelWidth, panelHeight));
             }
         };
         mainPanel.add(worldObjectsPanel, BorderLayout.CENTER);
     }
-    private AffineTransform getCornerRotateTransform(IWorldObject object)
-    {
-        if (calculateRotateBaseY(object)!=Double.MIN_VALUE)
-            return AffineTransform.getRotateInstance(-object.getAxisAngle(),calculateRotateBaseX(object),calculateRotateBaseY(object));
+
+    private AffineTransform getCornerRotateTransform(IWorldObject object) {
+        if (calculateRotateBaseY(object) != Double.MIN_VALUE)
+            return AffineTransform.getRotateInstance(-object.getAxisAngle(), calculateRotateBaseX(object), calculateRotateBaseY(object));
         return AffineTransform.getRotateInstance(-object.getAxisAngle());
     }
-    private double calculateRotateBaseY(IWorldObject object)
-    {
-        if (Turn.class.isInstance(object))
-        {
-            if (object.getImageName()=="road_2lane_tjunctionright.png" || object.getImageName()=="road_2lane_tjunctionleft.png")
+
+    private double calculateRotateBaseY(IWorldObject object) {
+        if (Turn.class.isInstance(object)) {
+            if (object.getImageName() == "road_2lane_tjunctionright.png" || object.getImageName() == "road_2lane_tjunctionleft.png")
                 return 0;
             else
-               return (object.getHeight()) / Config.SCALE;
+                return (object.getHeight()) / Config.SCALE;
         }
         return Double.MIN_VALUE;
     }
-    private double calculateRotateBaseX(IWorldObject object)
-    {
-        if (Turn.class.isInstance(object))
-        {
-            if (object.getImageName()=="road_2lane_tjunctionright.png" || object.getImageName()=="road_2lane_tjunctionleft.png")
-                return object.getWidth()/Config.SCALE;
-            else if (object.getImageName()=="road_2lane_90left.png" || object.getImageName()=="road_2lane_45left.png")
-                return (object.getWidth()-Config.roadWidth)/Config.SCALE;
-            else
-               return Config.roadWidth/Config.SCALE;
-        }
-        return Double.MIN_VALUE;
-    }
-    private double calculateDrawCornerY(CameraObject cameraObject)
-    {
-        IWorldObject worldObject = cameraObject.getWorldObject();
-        double drawCornerY=0;
 
-        if (Turn.class.isInstance(worldObject))
-        {
-            double baseY=(cameraObject.getY()-(worldObject.getHeight()/2));
-            if (worldObject.getImageName()=="road_2lane_tjunctionright.png")
-                drawCornerY=baseY + worldObject.getWidth();
-            else if (worldObject.getImageName()=="road_2lane_tjunctionleft.png")
-                drawCornerY=baseY;
+    private double calculateRotateBaseX(IWorldObject object) {
+        if (Turn.class.isInstance(object)) {
+            if (object.getImageName() == "road_2lane_tjunctionright.png" || object.getImageName() == "road_2lane_tjunctionleft.png")
+                return object.getWidth() / Config.SCALE;
+            else if (object.getImageName() == "road_2lane_90left.png" || object.getImageName() == "road_2lane_45left.png")
+                return (object.getWidth() - Config.roadWidth) / Config.SCALE;
+            else
+                return Config.roadWidth / Config.SCALE;
+        }
+        return Double.MIN_VALUE;
+    }
+
+    private double calculateDrawCornerY(CameraObject cameraObject) {
+        IWorldObject worldObject = cameraObject.getWorldObject();
+        double drawCornerY = 0;
+
+        if (Turn.class.isInstance(worldObject)) {
+            double baseY = (cameraObject.getY() - (worldObject.getHeight() / 2));
+            if (worldObject.getImageName() == "road_2lane_tjunctionright.png")
+                drawCornerY = baseY + worldObject.getWidth();
+            else if (worldObject.getImageName() == "road_2lane_tjunctionleft.png")
+                drawCornerY = baseY;
             else
                 drawCornerY = (baseY - worldObject.getHeight());
-        }
-        else
-            drawCornerY = ((cameraObject.getY() - worldObject.getHeight()/2)) ;
-        return drawCornerY/Config.SCALE;
+        } else
+            drawCornerY = ((cameraObject.getY() - worldObject.getHeight() / 2));
+        return drawCornerY / Config.SCALE;
     }
-    private double calculateDrawCornerX(CameraObject cameraObject)
-    {
-        IWorldObject worldObject = cameraObject.getWorldObject();
-        double drawCornerX=0;
 
-        if (Turn.class.isInstance(worldObject))
-        {
-            double baseX=(cameraObject.getX()-(worldObject.getWidth()/2));
-            if (worldObject.getImageName()=="road_2lane_tjunctionright.png" || worldObject.getImageName()=="road_2lane_tjunctionleft.png")
+    private double calculateDrawCornerX(CameraObject cameraObject) {
+        IWorldObject worldObject = cameraObject.getWorldObject();
+        double drawCornerX = 0;
+
+        if (Turn.class.isInstance(worldObject)) {
+            double baseX = (cameraObject.getX() - (worldObject.getWidth() / 2));
+            if (worldObject.getImageName() == "road_2lane_tjunctionright.png" || worldObject.getImageName() == "road_2lane_tjunctionleft.png")
                 drawCornerX = (baseX - worldObject.getWidth());
-            else if (worldObject.getImageName()=="road_2lane_45left.png" || worldObject.getImageName()=="road_2lane_90left.png")
-                drawCornerX = (baseX - (worldObject.getWidth()-Config.roadWidth));
+            else if (worldObject.getImageName() == "road_2lane_45left.png" || worldObject.getImageName() == "road_2lane_90left.png")
+                drawCornerX = (baseX - (worldObject.getWidth() - Config.roadWidth));
             else
-                drawCornerX=baseX-Config.roadWidth;
-        }
-        else
-            drawCornerX = ((int) (cameraObject.getX() - worldObject.getWidth() / 2)) ;
-        return drawCornerX/Config.SCALE;
+                drawCornerX = baseX - Config.roadWidth;
+        } else
+            drawCornerX = ((int) (cameraObject.getX() - worldObject.getWidth() / 2));
+        return drawCornerX / Config.SCALE;
     }
-    private AffineTransform getObjectTransformation(double drawCornerX,double drawCornerY, IWorldObject object)
-    {
-        AffineTransform transform=AffineTransform.getTranslateInstance(drawCornerX,drawCornerY);
+
+    private AffineTransform getObjectTransformation(double drawCornerX, double drawCornerY, IWorldObject object) {
+        AffineTransform transform = AffineTransform.getTranslateInstance(drawCornerX, drawCornerY);
         transform.concatenate(getCornerRotateTransform(object));
         transform.scale(Config.SCALENUM, Config.SCALENUM);
         return transform;
     }
+
     private void putDebugInformationOnImage(Image image, IWorldObject object) {
         Graphics2D g = (Graphics2D) image.getGraphics();
-        String loc = String.format ("x: %.0f, y:%.0f", object.getCenterX(), object.getCenterY(), object.getAxisAngle());
-        String rot = String.format ("%.3f (rad)", object.getAxisAngle());
+        String loc = String.format("x: %.0f, y:%.0f", object.getCenterX(), object.getCenterY(), object.getAxisAngle());
+        String rot = String.format("%.3f (rad)", object.getAxisAngle());
 
         g.setColor(Color.red);
         g.drawRect(0, 0, image.getWidth(null) - 1, image.getHeight(null) - 1);
@@ -199,14 +206,30 @@ public class Drawer implements IWorldVisualization {
         g.drawString(rot, 3, 35);
     }
 
-    private boolean checkHashMap (String imageName, WorldObjectState state) {
-        return worldImages.containsKey(imageName+"_"+state.toString());
+    private boolean checkHashMap(String imageName, WorldObjectState state) {
+        return worldImages.containsKey(imageName + "_" + state.toString());
     }
-    private void insertIntoHashMap(IWorldObject object, WorldObjectState state) throws IOException{
+
+    private void insertIntoHashMap(IWorldObject object, WorldObjectState state) throws IOException {
         String strippedImageName = StringUtil.removeExtension(object.getImageName());
-        String imageName = strippedImageName+"_"+state.toString()+".png";
+        String imageName = strippedImageName + "_" + state.toString() + ".png";
 
         BufferedImage bufferedImage = ImageIO.read(new File(ClassLoader.getSystemResource(imageName).getFile()));
         worldImages.put(imageName, bufferedImage);
+    }
+
+    private Polygon setPolygon(Graphics2D g2d, int wpWidth, int wpHeight) {
+        double[] center = {(camera.getX() / Config.SCALE + (wpWidth / 2)), (camera.getY() / Config.SCALE + (wpHeight / 2))};
+        double[] left = {leftCornerOfFieldView[0], leftCornerOfFieldView[1]};
+        double[] right = {rightCornerOfFieldView[0], rightCornerOfFieldView[1]};
+
+        AffineTransform.getRotateInstance(CameraSensor.carDirectionAngle, center[0], center[1]).transform(right, 0, right, 0, 1);
+        AffineTransform.getRotateInstance(CameraSensor.carDirectionAngle, center[0], center[1]).transform(left, 0, left, 0, 1);
+
+        int[] afterTransformCoordsX = {(int) center[0], (int) (left[0] / Config.SCALE), (int) (right[0] / Config.SCALE)};
+        int[] afterTransformCoordsY = {(int) center[1], (int) (left[1] / Config.SCALE), (int) (right[1] / Config.SCALE)};
+
+        Polygon polygon = new Polygon(afterTransformCoordsX, afterTransformCoordsY, 3);
+        return polygon;
     }
 }

@@ -33,8 +33,10 @@ public class CameraSensor {
     private double addingOffsetDistanceInMeter;
     private double addingOffsetDistanceInCoordinates;
 
-    //3 pont altal meghatarozott latoter
-    //Triangle fieldView;
+    //latoter kirajzolasahoz
+    public static int[] fieldViewCoordsX;
+    public static int[] fieldViewCoordsY;
+    public static double carDirectionAngle;
 
     public CameraSensor(AutomatedCar carObject) {
         resizer = Resizer.getResizer();
@@ -46,10 +48,19 @@ public class CameraSensor {
         addingOffsetDistanceInCoordinates = resizer.meterToCoordinate(addingOffsetDistanceInMeter);
     }
 
+    public CameraSensor() {
+    }
+
     public Triangle getSensorFieldView(AutomatedCar car) {
         centerPoint = calculateCenterPoint(car);
         leftPoint = calculateLeftCornerPoint(car, centerPoint);
         rightPoint = calculateRightCornerPoint(car, centerPoint);
+
+        fieldViewCoordsX = collectCoordinatesForDrawing();
+        fieldViewCoordsY = collectCoordinatesY();
+        carDirectionAngle = car.getDirectionAngle();
+        //System.out.println(centerPoint.getX());
+
         return new Triangle(leftPoint, rightPoint, centerPoint, SensorType.Camera);
     }
 
@@ -89,7 +100,7 @@ public class CameraSensor {
         return baseOfTriangle;
     }
 
-    double carDistanceFromObjectInMeter( double distanceInCoordinate) {
+    double carDistanceFromObjectInMeter(double distanceInCoordinate) {
         double distanceInMeter = resizer.coordinateToMeter(distanceInCoordinate);
         return distanceInMeter;
     }
@@ -115,4 +126,21 @@ public class CameraSensor {
         }
         return result;
     }
+
+    private int [] collectCoordinatesForDrawing() {
+        int[] xCoordinatesForDrawing = new int[3];
+        xCoordinatesForDrawing[0] = (int)centerPoint.getX();
+        xCoordinatesForDrawing[1] = (int)leftPoint.getX();
+        xCoordinatesForDrawing[2] =(int) rightPoint.getX();
+        return xCoordinatesForDrawing;
+    }
+
+    private int[] collectCoordinatesY() {
+        int[] yCoordinatesForDrawing = new int[3];
+        yCoordinatesForDrawing[0] = (int)centerPoint.getY();
+        yCoordinatesForDrawing[1] = (int)leftPoint.getY();
+        yCoordinatesForDrawing[2] =(int) rightPoint.getY();
+        return yCoordinatesForDrawing;
+    }
+
 }
