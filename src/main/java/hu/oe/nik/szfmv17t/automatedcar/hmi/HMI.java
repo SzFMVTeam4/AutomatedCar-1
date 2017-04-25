@@ -54,7 +54,7 @@ public class HMI extends SystemComponent implements KeyListener {
         gearStick = new GearStick();
         directionIndicator = new DirectionIndicator();
         brakePedal = new BrakePedal(directionIndicator);
-        steeringWheel = new SteeringWheel(directionIndicator);
+        steeringWheel = new SteeringWheel();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class HMI extends SystemComponent implements KeyListener {
         sendGasPedalSignal();
         sendBrakePedalSignal();
         sendGearStickSignal();
-        if(carspeed > 0 && steeringWheel.isSteerReleased()){
+        if (carspeed != 0 && steeringWheel.isSteerReleased()) {
             steeringWheel.steerRelease();
         }
     }
@@ -111,9 +111,7 @@ public class HMI extends SystemComponent implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-
-
-        System.out.println("keyPressed:" + keyEvent.getKeyChar());
+        //System.out.println("keyPressed:" + keyEvent.getKeyChar());
         char key = keyEvent.getKeyChar();
         switch (key) {
             case STEER_LEFT_KEY:
@@ -122,17 +120,19 @@ public class HMI extends SystemComponent implements KeyListener {
             case STEER_RIGHT_KEY:
                 steeringWheel.steerRight();
                 break;
+            case INCRASE_GAS_KEY:
+                gasPedal.setGasPedalReleased(false);
+                gasPedal.acceleration();
+                break;
+            case DECRASE_GAS_KEY:
+                gasPedal.setGasPedalReleased(false);
+                gasPedal.deceleration();
+                break;
         }
         if (keyPressHandled) {
             return;
         }
         switch (key) {
-            case INCRASE_GAS_KEY:
-                gasPedal.start();
-                break;
-            case DECRASE_GAS_KEY:
-                gasPedal.start();
-                break;
             case INCRASE_BRAKE_KEY:
                 brakePedal.start();
                 break;
@@ -145,7 +145,7 @@ public class HMI extends SystemComponent implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
-        System.out.println("keyReleased:" + keyEvent.getKeyChar());
+        //System.out.println("keyReleased:" + keyEvent.getKeyChar());
         keyPressHandled = false;
         char key = keyEvent.getKeyChar();
         switch (key) {
@@ -156,9 +156,11 @@ public class HMI extends SystemComponent implements KeyListener {
                 steeringWheel.setSteerReleased(true);
                 break;
             case INCRASE_GAS_KEY:
+                gasPedal.setGasPedalReleased(true);
                 gasPedal.acceleration();
                 break;
             case DECRASE_GAS_KEY:
+                gasPedal.setGasPedalReleased(true);
                 gasPedal.deceleration();
                 break;
             case INCRASE_BRAKE_KEY:
