@@ -18,12 +18,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by Mariusz on 2017.03.15..
  */
 public class Drawer implements IWorldVisualization {
+    private LinkedList<IDebugDrawer> debugDrawers;
+
     @Override
     public int getHeight() {
         return 0;
@@ -45,6 +48,7 @@ public class Drawer implements IWorldVisualization {
     private static HashMap<String, BufferedImage> worldImages;
 
     private Drawer(IWorldVisualisation world) {
+        debugDrawers = new LinkedList<>();
     }
 
     public static Drawer getDrawer(IWorldVisualisation world) throws IOException {
@@ -69,6 +73,13 @@ public class Drawer implements IWorldVisualization {
         return FrameComposer.getComposer(world, worldPanel);
     }
 
+    public void addDebugDrawer (IDebugDrawer dd) {
+        debugDrawers.add (dd);
+    }
+
+    //private static double t=0.1;
+    //double direction =0.1;
+    int t = 0;
 
     public void DrawFrametoPanel(JPanel worldObjectsPanel, IWorldVisualisation world, JPanel mainPanel) {
         BorderLayout layout = (BorderLayout) mainPanel.getLayout();
@@ -103,6 +114,20 @@ public class Drawer implements IWorldVisualization {
                         image = worldImages.get(imageName);
                     }
                     g2d.drawImage(image, getObjectTransformation(calculateDrawCornerX(object), calculateDrawCornerY(object), object.getWorldObject()), null);
+                }
+
+                if (Config.debug) {
+                    IWorldObject car = fc.getCar ();
+                    CameraObject c = new CameraObject(car, car, fc.getCamera());
+                    Camera camera = fc.getCamera();
+
+                    DebugGraphics debugGraphics = new DebugGraphics(camera, car, g2d);
+                    debugGraphics.drawPoint((int)car.getCenterX(), (int)car.getCenterY(), Color.blue);
+                    debugGraphics.setColor(Color.black);
+
+                    for (IDebugDrawer dd : debugDrawers) {
+                        dd.drawDebugInfo(debugGraphics);
+                    }
                 }
             }
         };
