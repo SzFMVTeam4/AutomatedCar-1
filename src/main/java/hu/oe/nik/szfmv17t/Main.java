@@ -1,5 +1,6 @@
 package hu.oe.nik.szfmv17t;
 
+import hu.oe.nik.szfmv17t.automatedcar.camerasensor.LaneKeeping;
 import hu.oe.nik.szfmv17t.automatedcar.radarsensor.RadarController;
 import hu.oe.nik.szfmv17t.automatedcar.bus.VirtualFunctionBus;
 import hu.oe.nik.szfmv17t.automatedcar.camerasensor.CameraSensorController;
@@ -49,6 +50,10 @@ public class Main {
 
 		// init visualisation module with the world
 		vis.init(w);
+
+		LaneKeeping laneKeeping = new LaneKeeping(cameraSensorController);
+		vis.getDrawer().addDebugDrawer (laneKeeping);
+
 		Thread drawThread = new Thread(vis);
 		drawThread.start();
 		while(true) {

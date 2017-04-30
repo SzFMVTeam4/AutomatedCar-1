@@ -38,8 +38,8 @@ public class CameraSensorControllerTest {
 
     @Test
     public void getDataOfCameraSensorTest() {
-        expected = cameraSensorController.getDataOfCameraSensor(car, worldObjects);
-        HashMap<IWorldObject, Double> result = cameraSensorController.getDataOfCameraSensor(car, worldObjects);
+        expected = cameraSensorController.getDataOfCameraSensor(worldObjects);
+        HashMap<IWorldObject, Double> result = cameraSensorController.getDataOfCameraSensor(worldObjects);
 
         assertTrue(expected.keySet().toArray()[0].equals(result.keySet().toArray()[0]));
     }
