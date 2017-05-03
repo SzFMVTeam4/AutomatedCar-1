@@ -66,11 +66,11 @@ public class CameraSensorController extends SystemComponent {
     }
 
     private void sendValueOfSign() {
-        this.signDetecting = new SignDetecting(cameraSensorStoredData);
         halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
         halfSeenWorldObjects = world.checkSensorArea(halfOfFieldView);
         halfRelevantObjects = cameraSensor.getRelevantWorldObjects(halfSeenWorldObjects);
         halfCameraSensorStoredData = getDataOfCameraSensor(car, halfRelevantObjects);
+        this.signDetecting = new SignDetecting(halfCameraSensorStoredData);
 
         if (cameraSensorStoredData.size() > 0) {
             signObjects = signDetecting.searchSigns(halfCameraSensorStoredData);
