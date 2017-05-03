@@ -29,6 +29,19 @@ public class CameraSensorController extends SystemComponent {
     //relevans objektumok es a kiszamolt tavolsag eltarolasa
     private HashMap<IWorldObject, Double> cameraSensorStoredData;
 
+    //az ut jobb oldali latomezo ellenorzesehez
+    private SignDetecting signDetecting;
+    private Triangle halfOfFieldView;
+    List<IWorldObject> relevantObjectsHalf;
+
+    private HashMap<IWorldObject, Double> signObjects;
+    private IWorldObject closestSign;
+    private double valueOfSign;
+
+    public IWorldObject getClosestSign() {
+        return closestSign;
+    }
+
     public CameraSensorController(AutomatedCar car, World world) {
         this.car = car;
         this.cameraSensor = new CameraSensor(car);
@@ -40,12 +53,29 @@ public class CameraSensorController extends SystemComponent {
 
     @Override
     public void loop() {
-        VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
         fieldView = cameraSensor.getSensorFieldView(car);
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
         cameraSensorStoredData = getDataOfCameraSensor(car, relevantObjects);
         //printOutInformation();
+        VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
+
+        sendValueOfSign();
+    }
+
+    private void sendValueOfSign() {
+        this.signDetecting = new SignDetecting(cameraSensorStoredData);
+        //halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
+        //relevantObjectsHalf = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
+
+        if (cameraSensorStoredData.size() > 0) {
+            signObjects = signDetecting.searchSigns(cameraSensorStoredData);
+            closestSign = signDetecting.findClosestSign(signObjects);
+            valueOfSign = signDetecting.getValueOfSign(getClosestSign());
+            if (valueOfSign > 0) {
+                VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.Visualisation_Sign_Value, (int) valueOfSign));
+            }
+        }
     }
 
     @Override

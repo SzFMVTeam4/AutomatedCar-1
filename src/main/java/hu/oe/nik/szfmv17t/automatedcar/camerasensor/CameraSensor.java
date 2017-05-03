@@ -50,6 +50,13 @@ public class CameraSensor {
         return new Triangle(leftPoint, rightPoint, centerPoint, SensorType.Camera);
     }
 
+    public Triangle getSensorHalfOfFieldView(AutomatedCar car) {
+        centerPoint = calculateCenterPoint(car);
+        leftPoint = calculateLeftCornerPointOfHalfTriangle(car, centerPoint);
+        rightPoint = calculateRightCornerPoint(car, centerPoint);
+        return new Triangle(leftPoint, rightPoint, centerPoint, SensorType.Camera);
+    }
+
     Point calculateLeftCornerPoint(AutomatedCar car, Point center) {
         double leftUpperBaseX = center.getX() - addingOffsetDistanceInCoordinates;
         double leftUpperBaseY = center.getY() - viewDistanceInCoordinates;
@@ -79,6 +86,18 @@ public class CameraSensor {
 
     Point calculateCenterPoint(AutomatedCar car) {
         return new Point((int) car.getCenterX(), (int) car.getCenterY());
+    }
+
+    Point calculateLeftCornerPointOfHalfTriangle(AutomatedCar car, Point center) {
+        double leftUpperBaseX = center.getX();
+        double leftUpperBaseY = center.getY() - viewDistanceInCoordinates;
+        double[] coordinates = {leftUpperBaseX, leftUpperBaseY};
+
+        AffineTransform.getRotateInstance(car.getDirectionAngle(), center.getX(), center.getY()).transform(coordinates, 0, coordinates, 0, 1);
+
+        double rightUpperCornerX = coordinates[0];
+        double rightUpperCornerY = coordinates[1];
+        return new Point((int) rightUpperCornerX, (int) rightUpperCornerY);
     }
 
     double calculateOffsetDistance() {

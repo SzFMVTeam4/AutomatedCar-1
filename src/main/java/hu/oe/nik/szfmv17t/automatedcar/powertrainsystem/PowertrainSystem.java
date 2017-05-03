@@ -23,6 +23,7 @@ public class PowertrainSystem extends SystemComponent {
     public static final int Physics_Speed = 31;
     public static final int Physics_Gear = 32;
     public static final int Visualisation = 40;
+    public static final int Visualisation_Sign_Value = 41;
 
     // physics
     private SpeedControl speedControl;
@@ -33,8 +34,6 @@ public class PowertrainSystem extends SystemComponent {
     private int wheelState = 0;
 
 
-
-
     public PowertrainSystem(double height, double width, double carWeight) {
         super();
         this.speedControl = new SpeedControl(carWeight);
@@ -42,12 +41,10 @@ public class PowertrainSystem extends SystemComponent {
     }
 
 
-
     @Override
     public void loop() {
         // TODO write this
     }
-
 
 
     @Override
@@ -80,17 +77,17 @@ public class PowertrainSystem extends SystemComponent {
 
             case CAMERA_SENSOR_ID:
                 break;
+            case Visualisation_Sign_Value:
+                break;
             default:
                 // ignore other signals
         }
     }
 
 
-
     public double getSteeringAngle(double carVelocity) {
         return steeringControl.calculateAngle(carVelocity, this.wheelState);
     }
-
 
 
     public double getVelocity() {
