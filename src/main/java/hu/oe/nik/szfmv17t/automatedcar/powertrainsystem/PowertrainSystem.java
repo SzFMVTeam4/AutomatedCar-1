@@ -29,6 +29,7 @@ public class PowertrainSystem extends SystemComponent {
     public static final int Physics_Speed = 31;
     public static final int Physics_Gear = 32;
     public static final int Visualisation = 40;
+    public static final int Visualisation_Sign_Value = 41;
 
     // physics
     private SpeedControl speedControl;
@@ -37,6 +38,7 @@ public class PowertrainSystem extends SystemComponent {
     // Output signals
     // Only these are available trough getters
     private int wheelState = 0;
+
 
     public PowertrainSystem(double height, double width, double carWeight) {
         super();
@@ -86,6 +88,8 @@ public class PowertrainSystem extends SystemComponent {
                 break;
 
             case CAMERA_SENSOR_ID:
+                break;
+            case Visualisation_Sign_Value:
                 break;
             default:
                 // ignore other signals
