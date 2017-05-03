@@ -2,6 +2,7 @@ package hu.oe.nik.szfmv17t.visualisation;
 
 import hu.oe.nik.szfmv17t.environment.interfaces.IWorldObject;
 import hu.oe.nik.szfmv17t.environment.utils.Config;
+import hu.oe.nik.szfmv17t.environment.utils.Triangle;
 
 import java.awt.*;
 
@@ -27,9 +28,17 @@ public class DebugGraphics {
         drawPoint(x, y);
     }
 
+    public void drawPoint (Point.Double p) {
+        drawPoint(p.x, p.y);
+    }
+
     public void drawPoint (double x, double y) {
         Point p = getCanvasPoint(x, y);
         g.drawOval(p.x - radius / 2, p.y - radius / 2, radius, radius);
+    }
+
+    public void drawLine (Point.Double p1, Point.Double p2) {
+        drawLine(p1.x, p1.y, p2.x, p2.y);
     }
 
     public void drawLine (double x1, double y1, double x2, double y2) {

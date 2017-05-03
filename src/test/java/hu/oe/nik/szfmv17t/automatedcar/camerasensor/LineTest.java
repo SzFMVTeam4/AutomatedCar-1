@@ -55,11 +55,22 @@ public class LineTest {
     }
 
     @Test
-    public void intersectionTestVertical () {
+    public void intersectionTestVertical1 () {
         Line l = new Line (0, 0, 10, 10);
         Line vertical = new Line (5, 0, 5, 10);
 
         Point.Double i = vertical.getIntersectionPoint(l);
+
+        assertEquals(5, i.x, 0.01);
+        assertEquals(5, i.y, 0.01);
+    }
+
+    @Test
+    public void intersectionTestVertical2 () {
+        Line l = new Line (0, 0, 10, 10);
+        Line vertical = new Line (5, 0, 5, 10);
+
+        Point.Double i = l.getIntersectionPoint(vertical);
 
         assertEquals(5, i.x, 0.01);
         assertEquals(5, i.y, 0.01);

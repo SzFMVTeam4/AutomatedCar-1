@@ -24,13 +24,16 @@ public class Line {
 
     public Point.Double getIntersectionPoint (Line other) {
         if (this.slope == other.slope)
-            return  null;
+            return null;
 
         if (Double.isInfinite(slope)) {
             double x = yintercept;
             double y = other.slope * x + other.yintercept;
 
             return new Point2D.Double(x, y);
+
+        } else if (Double.isInfinite(other.slope)) {
+            return other.getIntersectionPoint(this);
 
         } else {
             double x = (other.yintercept - this.yintercept) / (this.slope - other.slope);
