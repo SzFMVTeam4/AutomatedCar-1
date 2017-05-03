@@ -32,7 +32,9 @@ public class CameraSensorController extends SystemComponent {
     //az ut jobb oldali latomezo ellenorzesehez
     private SignDetecting signDetecting;
     private Triangle halfOfFieldView;
-    List<IWorldObject> relevantObjectsHalf;
+    List<IWorldObject> halfSeenWorldObjects;
+    List<IWorldObject> halfRelevantObjects;
+    private HashMap<IWorldObject, Double> halfCameraSensorStoredData;
 
     private HashMap<IWorldObject, Double> signObjects;
     private IWorldObject closestSign;
@@ -65,11 +67,13 @@ public class CameraSensorController extends SystemComponent {
 
     private void sendValueOfSign() {
         this.signDetecting = new SignDetecting(cameraSensorStoredData);
-        //halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
-        //relevantObjectsHalf = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
+        halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
+        halfSeenWorldObjects = world.checkSensorArea(halfOfFieldView);
+        halfRelevantObjects = cameraSensor.getRelevantWorldObjects(halfSeenWorldObjects);
+        halfCameraSensorStoredData = getDataOfCameraSensor(car, halfRelevantObjects);
 
         if (cameraSensorStoredData.size() > 0) {
-            signObjects = signDetecting.searchSigns(cameraSensorStoredData);
+            signObjects = signDetecting.searchSigns(halfCameraSensorStoredData);
             closestSign = signDetecting.findClosestSign(signObjects);
             valueOfSign = signDetecting.getValueOfSign(getClosestSign());
             if (valueOfSign > 0) {
