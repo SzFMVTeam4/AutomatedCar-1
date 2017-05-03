@@ -53,6 +53,7 @@ public class Main {
 
 		LaneKeeping laneKeeping = new LaneKeeping(cameraSensorController);
 		vis.getDrawer().addDebugDrawer (laneKeeping);
+		VirtualFunctionBus.registerComponent(laneKeeping);
 
 		Thread drawThread = new Thread(vis);
 		drawThread.start();
