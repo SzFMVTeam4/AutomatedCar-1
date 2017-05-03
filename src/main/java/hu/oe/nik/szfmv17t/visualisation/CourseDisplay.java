@@ -28,22 +28,24 @@ public class CourseDisplay implements Runnable, ActionListener {
 	private JPanel keyPanel;
 	private JPanel mainPanel;
 	private JPanel worldObjectsJPanel;
-	//private Drawer drawer;
+	private JPanel signPanel;
+    //privateDrawer drawer;
 	private IWorldVisualisation world;
 	private BufferStrategy strategy;
 	private Drawer drawer;
-	Timer timer=new Timer(1000/Config.FPS, this);
+	Timer timer = new Timer(1000 / Config.FPS, this);
 
-	public void refreshFrame() {
-		frame.invalidate();
-		hmiJPanel.invalidate();
-    //mainPanel.invalidate();
-		//frame.pack();
-		frame.validate();
-		frame.repaint();
-	}
+    public void refreshFrame() {
+        frame.invalidate();
+        hmiJPanel.invalidate();
+        signPanel.invalidate();
+        //mainPanel.invalidate();
+        //frame.pack();
+        frame.validate();
+        frame.repaint();
+    }
 
-	public void init(IWorldVisualisation world) {
+    public void init(IWorldVisualisation world) {
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.world = world;
@@ -56,13 +58,11 @@ public class CourseDisplay implements Runnable, ActionListener {
 		keyPanel = new KeyPanel();
 		mainPanel.add(keyPanel,BorderLayout.NORTH);
 
-		mainPanel.add(hmiJPanel, BorderLayout.SOUTH);
-		worldObjectsJPanel = new JPanel();
-		mainPanel.add(worldObjectsJPanel,BorderLayout.CENTER);
-		SizeFrame(frame);
-		frame.add(mainPanel);
-		frame.validate();
-		frame.setResizable(false);
+        mainPanel.add(hmiJPanel, BorderLayout.SOUTH);
+        worldObjectsJPanel = new JPanel();
+        mainPanel.add(worldObjectsJPanel, BorderLayout.CENTER);
+        signPanel = new SignPanel();
+        mainPanel.add(signPanel, BorderLayout.EAST);
 
 		try {
 			drawer = Drawer.getDrawer(world);
@@ -89,13 +89,13 @@ public class CourseDisplay implements Runnable, ActionListener {
 		frame.setSize(Config.getScreenWidth, Config.getScreenHeight - 50);
 	}
 
-	private JPanel filler() {
-		JPanel filler = new JPanel();
-		filler.setOpaque(true);
-		filler.setBackground(Color.orange);
-		filler.setPreferredSize(new Dimension(200, 40));
-		return filler;
-	}
+    private JPanel filler() {
+        JPanel filler = new JPanel();
+        filler.setOpaque(true);
+        filler.setBackground(Color.orange);
+        filler.setPreferredSize(new Dimension(200, 40));
+        return filler;
+    }
 
 	@Override
 	public void run() {

@@ -5,6 +5,7 @@ import hu.oe.nik.szfmv17t.automatedcar.radarsensor.RadarController;
 import hu.oe.nik.szfmv17t.automatedcar.bus.VirtualFunctionBus;
 import hu.oe.nik.szfmv17t.automatedcar.camerasensor.CameraSensorController;
 import hu.oe.nik.szfmv17t.environment.domain.Car;
+import hu.oe.nik.szfmv17t.visualisation.SignPanel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,18 +20,18 @@ import hu.oe.nik.szfmv17t.visualisation.HmiJPanel;
 
 public class Main {
 
-	private static final Logger logger = LogManager.getLogger();
-	public static final int CYCLE_PERIOD = 20;
+    private static final Logger logger = LogManager.getLogger();
+    public static final int CYCLE_PERIOD = 20;
 
-	public static final String world_1="src/main/resources/test_world.xml";
-	public static final String world_2="src/main/resources/NewLevel.xml";
-	public static final String world_3="src/main/resources/AdvancedLevel.xml";
+    public static final String world_1 = "src/main/resources/test_world.xml";
+    public static final String world_2 = "src/main/resources/NewLevel.xml";
+    public static final String world_3 = "src/main/resources/AdvancedLevel.xml";
 
-	public static void main(String[] args) {
-		CourseDisplay vis = new CourseDisplay();
+    public static void main(String[] args) {
+        CourseDisplay vis = new CourseDisplay();
 
-		// create the world
-		World w = new World(world_3);
+        // create the world
+        World w = new World(world_3);
 
 		// create an automated car NEW signature
 		AutomatedCar car = new AutomatedCar(2759, 3318, 108, 240, 0d, 3, "car_1_white.png", 200d, 0d, 0d, 2759, 3318);
@@ -46,8 +47,8 @@ public class Main {
 		//create HMI - Human machine interface
 		HMI hmi = new HMI();
 
-		//init Ultrasonic sensor system
-		UltrasonicController usController = new UltrasonicController(car, w);
+        //init Ultrasonic sensor system
+        UltrasonicController usController = new UltrasonicController(car, w);
 
 		//create HMI panels
 		HmiJPanel.setHmi(hmi, usController);
@@ -55,8 +56,9 @@ public class Main {
 		RadarController radarController = new RadarController(car,w);
 		VirtualFunctionBus.registerComponent(radarController);
 
-		CameraSensorController  cameraSensorController = new CameraSensorController(car, w);
-		VirtualFunctionBus.registerComponent(cameraSensorController);
+        CameraSensorController cameraSensorController = new CameraSensorController(car, w);
+        VirtualFunctionBus.registerComponent(cameraSensorController);
+        SignPanel.setCameraSensorController(cameraSensorController);
 
 		// add player controlled car to the world
 		w.addObjectToWorld(car);
