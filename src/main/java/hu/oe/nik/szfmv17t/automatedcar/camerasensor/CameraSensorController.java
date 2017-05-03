@@ -72,7 +72,7 @@ public class CameraSensorController extends SystemComponent {
         halfCameraSensorStoredData = getDataOfCameraSensor(car, halfRelevantObjects);
         this.signDetecting = new SignDetecting(halfCameraSensorStoredData);
 
-        if (cameraSensorStoredData.size() > 0) {
+        if (halfCameraSensorStoredData.size() > 0) {
             signObjects = signDetecting.searchSigns(halfCameraSensorStoredData);
             closestSign = signDetecting.findClosestSign(signObjects);
             valueOfSign = signDetecting.getValueOfSign(getClosestSign());
