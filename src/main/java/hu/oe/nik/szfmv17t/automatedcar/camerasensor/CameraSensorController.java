@@ -58,6 +58,7 @@ public class CameraSensorController extends SystemComponent {
         fieldView = cameraSensor.getSensorFieldView(car);
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
+<<<<<<< HEAD
         cameraSensorStoredData = getDataOfCameraSensor(car, relevantObjects);
        //printOutInformation();
         VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
@@ -80,6 +81,10 @@ public class CameraSensorController extends SystemComponent {
                 VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.Visualisation_Sign_Value, (int) valueOfSign));
             }
         }
+=======
+        cameraSensorStoredData = getDataOfCameraSensor(relevantObjects);
+        //printOutInformation();
+>>>>>>> refs/remotes/origin/master
     }
 
     @Override
@@ -87,14 +92,17 @@ public class CameraSensorController extends SystemComponent {
 
     }
 
+    public HashMap<IWorldObject, Double> getDataOfCameraSensor() {
+        return getDataOfCameraSensor(relevantObjects);
+    }
+
     /**
      * Kiszamolja az auto es a relevans objektum tavolsagat es eltarolja
      *
-     * @param car
      * @param relevantObjectsList
      * @return HashMap<IWorldObject, Double>
      */
-    public HashMap<IWorldObject, Double> getDataOfCameraSensor(AutomatedCar car, List<IWorldObject> relevantObjectsList) {
+    public HashMap<IWorldObject, Double> getDataOfCameraSensor(List<IWorldObject> relevantObjectsList) {
         HashMap<IWorldObject, Double> result = new HashMap<IWorldObject, Double>();
         double distanceInCoordinate;
         double distanceInMeter;

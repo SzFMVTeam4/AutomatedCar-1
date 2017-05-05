@@ -1,5 +1,6 @@
 package hu.oe.nik.szfmv17t;
 
+import hu.oe.nik.szfmv17t.automatedcar.camerasensor.LaneKeeping;
 import hu.oe.nik.szfmv17t.automatedcar.radarsensor.RadarController;
 import hu.oe.nik.szfmv17t.automatedcar.bus.VirtualFunctionBus;
 import hu.oe.nik.szfmv17t.automatedcar.camerasensor.CameraSensorController;
@@ -67,6 +68,7 @@ public class Main {
         w.addObjectToWorld(npcBlackVan1);
 
 
+<<<<<<< HEAD
         // init visualisation module with the world
         vis.init(w);
         Thread drawThread = new Thread(vis);
@@ -83,4 +85,27 @@ public class Main {
             }
         }
     }
+=======
+		// init visualisation module with the world
+		vis.init(w);
+
+		LaneKeeping laneKeeping = new LaneKeeping(cameraSensorController);
+		vis.getDrawer().addDebugDrawer (laneKeeping);
+		VirtualFunctionBus.registerComponent(laneKeeping);
+
+		Thread drawThread = new Thread(vis);
+		drawThread.start();
+		while(true) {
+			try {
+				car.drive();
+				hmi.setCarspeed(car.getSpeed());
+				//vis.refreshFrame();
+				w.updateWorld();
+				Thread.sleep(CYCLE_PERIOD);
+			} catch(Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+	}
+>>>>>>> refs/remotes/origin/master
 }

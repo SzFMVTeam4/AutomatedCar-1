@@ -17,4 +17,5 @@ public final class Config {
     public static double SCALE = 3.7;
     public static double SCALENUM = 1d / SCALE;
     public static double roadWidth=350;
+    public static boolean debug = true;
 }
