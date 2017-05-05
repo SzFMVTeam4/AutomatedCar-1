@@ -50,6 +50,16 @@ public class FrameComposer {
         return cameraObjects;
     }
 
+    public Point getCarPosition () {
+        IWorldObject car = getCar (world.getWorld());
+
+        return new Point((int)car.getCenterX(), (int)car.getCenterY());
+    }
+
+    public IWorldObject getCar () {
+        return getCar(world.getWorld());
+    }
+
     private IWorldObject getCar(List<IWorldObject> objects)
     {
         for (IWorldObject element: objects)
@@ -128,6 +138,10 @@ public class FrameComposer {
             visibleObjectsWithRelativePosition.add(relativeObject);
         }
         return visibleObjectsWithRelativePosition;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }
 

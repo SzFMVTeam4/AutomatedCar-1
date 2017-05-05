@@ -31,12 +31,13 @@ public class CourseDisplay implements Runnable, ActionListener {
 	//private Drawer drawer;
 	private IWorldVisualisation world;
 	private BufferStrategy strategy;
-	Timer timer = new Timer(1000 / Config.FPS, this);
+	private Drawer drawer;
+	Timer timer=new Timer(1000/Config.FPS, this);
 
 	public void refreshFrame() {
 		frame.invalidate();
 		hmiJPanel.invalidate();
-		//mainPanel.invalidate();
+    //mainPanel.invalidate();
 		//frame.pack();
 		frame.validate();
 		frame.repaint();
@@ -65,6 +66,14 @@ public class CourseDisplay implements Runnable, ActionListener {
 		frame.validate();
 		//frame.setVisible(true);
 		frame.setResizable(false);
+
+		try {
+			drawer = Drawer.getDrawer(world);
+			System.err.println ("Dinit " + drawer);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		timer.start();
 	}
 
@@ -114,13 +123,14 @@ public class CourseDisplay implements Runnable, ActionListener {
 
 	}
 
+	public Drawer getDrawer () {
+		return drawer;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		try {
-			Drawer.getDrawer(world).DrawFrametoPanel(worldObjectsJPanel, world, mainPanel);
-		} catch(IOException er) {
-			er.printStackTrace();
-		}
+        drawer.DrawFrametoPanel(worldObjectsJPanel, world,mainPanel);
+
 		refreshFrame();
 	}
 }
