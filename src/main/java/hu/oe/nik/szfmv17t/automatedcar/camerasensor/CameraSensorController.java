@@ -59,8 +59,10 @@ public class CameraSensorController extends SystemComponent {
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
         cameraSensorStoredData = getDataOfCameraSensor(car, relevantObjects);
+       //printOutInformation();
         VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
 
+      //sendValueOfSign();
     }
 
     private void sendValueOfSign() {
