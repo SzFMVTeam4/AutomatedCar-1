@@ -58,19 +58,19 @@ public class CameraSensorController extends SystemComponent {
         fieldView = cameraSensor.getSensorFieldView(car);
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
-<<<<<<< HEAD
-        cameraSensorStoredData = getDataOfCameraSensor(car, relevantObjects);
+
+        cameraSensorStoredData = getDataOfCameraSensor(relevantObjects);
        //printOutInformation();
         VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
 
-      //sendValueOfSign();
+      sendValueOfSign();
     }
 
     private void sendValueOfSign() {
         halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
         halfSeenWorldObjects = world.checkSensorArea(halfOfFieldView);
         halfRelevantObjects = cameraSensor.getRelevantWorldObjects(halfSeenWorldObjects);
-        halfCameraSensorStoredData = getDataOfCameraSensor(car, halfRelevantObjects);
+        halfCameraSensorStoredData = getDataOfCameraSensor(halfRelevantObjects);
         this.signDetecting = new SignDetecting(halfCameraSensorStoredData);
 
         if (halfCameraSensorStoredData.size() > 0) {
@@ -81,10 +81,6 @@ public class CameraSensorController extends SystemComponent {
                 VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.Visualisation_Sign_Value, (int) valueOfSign));
             }
         }
-=======
-        cameraSensorStoredData = getDataOfCameraSensor(relevantObjects);
-        //printOutInformation();
->>>>>>> refs/remotes/origin/master
     }
 
     @Override

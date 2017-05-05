@@ -67,25 +67,6 @@ public class Main {
         w.addObjectToWorld(npcBlueCar2);
         w.addObjectToWorld(npcBlackVan1);
 
-
-<<<<<<< HEAD
-        // init visualisation module with the world
-        vis.init(w);
-        Thread drawThread = new Thread(vis);
-        drawThread.start();
-        while (true) {
-            try {
-                car.drive();
-                hmi.setCarspeed(car.getSpeed());
-                //vis.refreshFrame();
-                w.updateWorld();
-                Thread.sleep(CYCLE_PERIOD);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-=======
 		// init visualisation module with the world
 		vis.init(w);
 
@@ -107,5 +88,5 @@ public class Main {
 			}
 		}
 	}
->>>>>>> refs/remotes/origin/master
+
 }

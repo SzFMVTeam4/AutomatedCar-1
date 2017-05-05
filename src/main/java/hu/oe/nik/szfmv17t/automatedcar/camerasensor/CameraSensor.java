@@ -116,7 +116,7 @@ public class CameraSensor {
         double carUpMiddleY = carObject.getCenterY() - (carObject.getHeight() / 2);
 
         double woLowerMiddleX = worldObject.getCenterX();
-        double woLowerMiddleY = worldObject.getCenterY() + (worldObject.getHeight() / 2);
+        double woLowerMiddleY = worldObject.getCenterY();
 
         double distanceInCoordinate = Math.abs(Math.sqrt(Math.pow((woLowerMiddleX - carUpMiddleX), 2) + Math.pow((woLowerMiddleY - carUpMiddleY), 2)));
         return distanceInCoordinate;
