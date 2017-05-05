@@ -63,16 +63,23 @@ public class CourseDisplay implements Runnable, ActionListener {
         mainPanel.add(worldObjectsJPanel, BorderLayout.CENTER);
         signPanel = new SignPanel();
         mainPanel.add(signPanel, BorderLayout.EAST);
+        SizeFrame(frame);
 
-		try {
-			drawer = Drawer.getDrawer(world);
-			System.err.println ("Dinit " + drawer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        frame.add(mainPanel);
+        frame.validate();
+        //frame.setVisible(true);
+        frame.setResizable(false);
 
-		timer.start();
-	}
+        try {
+            drawer = Drawer.getDrawer(world);
+            System.err.println ("Dinit " + drawer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        timer.start();
+    }
 
 	public JPanel getHmiJPanel() {
 		JPanel hmiJPanel = new HmiJPanel();
@@ -101,6 +108,17 @@ public class CourseDisplay implements Runnable, ActionListener {
 	public void run() {
 
 	}
+    @Override
+    public void run() {
+/*int refreshRate = 1000 / Config.FPS;
+			try {
+				Drawer.getDrawer(world).DrawFrametoPanel(worldObjectsJPanel,world,mainPanel);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			refreshFrame();
+			*/
+    }
 
 	public Drawer getDrawer () {
 		return drawer;
@@ -110,6 +128,7 @@ public class CourseDisplay implements Runnable, ActionListener {
 	public void actionPerformed(ActionEvent e) {
         drawer.DrawFrametoPanel(worldObjectsJPanel, world,mainPanel);
 
-		refreshFrame();
+        refreshFrame();
 	}
+
 }

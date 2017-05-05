@@ -19,11 +19,6 @@ public class SignPanel extends JPanel {
     private IWorldObject iWorldObject;
     private BufferedImage bufferedImage;
 
-    private JLabel lbImage;
-
-    private Label labelName;
-    private Label labelValue;
-
     public static void setCameraSensorController(CameraSensorController cameraSensorController) {
         SignPanel.cameraSensorController = cameraSensorController;
     }
@@ -33,12 +28,19 @@ public class SignPanel extends JPanel {
     }
 
     public SignPanel() {
-        this.iWorldObject = getCameraSensorController().getClosestSign();
+        this.setPreferredSize(new Dimension(40, 50));
+        setBackground(Color.blue);
+        this.iWorldObject = cameraSensorController.getClosestSign();
+    }
 
-        this.labelName = new Label("Image");
-        this.add(labelName);
-        this.labelValue = new Label(String.valueOf(0));
-        this.add(labelValue);
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        iWorldObject = cameraSensorController.getClosestSign();
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         if (iWorldObject != null) {
             try {
@@ -46,38 +48,13 @@ public class SignPanel extends JPanel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            //int x = (getWidth() - bufferedImage.getWidth()) / 2;
+            // int y = (getHeight() - bufferedImage.getHeight()) / 2;
+            int width = (int) (bufferedImage.getWidth() / 2);
+            int height = (int) (bufferedImage.getHeight() / 2);
 
-            this.lbImage = new JLabel(new ImageIcon(bufferedImage));
-            this.add(lbImage);
-            lbImage.setIcon((Icon) bufferedImage);
-            lbImage.setSize(bufferedImage.getWidth(), bufferedImage.getHeight());
-
+            g.drawImage(bufferedImage, 0, 0, width, height, this);
         }
-
-    }
-
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        g.drawImage(bufferedImage, 0, 0, this);
-    }
-
-    @Override
-    public void invalidate() {
-        super.invalidate();
-
-        if (lbImage != null) {
-            lbImage.setIcon((Icon) bufferedImage);
-        }
-       /* if (labelValue != null) {
-            String result = iWorldObject.getImageName();
-            if (result.length() > 0) {
-                labelValue.setText(String.valueOf(result));
-            }
-        }*/
-
     }
 
 }
