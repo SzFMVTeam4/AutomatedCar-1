@@ -19,6 +19,10 @@ import java.util.Map;
  * Created by winifred on 2017.04.17..
  */
 public class CameraSensorController extends SystemComponent {
+    public static final int C_CARX = 70;
+    public static final int C_CARY = 71;
+    public static final int C_CARSPEED = 72;
+    public static final int C_CARANGLE = 73;
 
     private CameraSensor cameraSensor;
     private AutomatedCar car;
@@ -46,11 +50,16 @@ public class CameraSensorController extends SystemComponent {
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
         cameraSensorStoredData = getDataOfCameraSensor(relevantObjects);
         //printOutInformation();
+
+        //Ennek nem itt kellene lennie
+        VirtualFunctionBus.sendSignal(new Signal (C_CARX, car.getCenterX()));
+        VirtualFunctionBus.sendSignal(new Signal (C_CARY, car.getCenterY()));
+        VirtualFunctionBus.sendSignal(new Signal (C_CARSPEED, car.getSpeed()));
+        VirtualFunctionBus.sendSignal(new Signal (C_CARANGLE, car.getAxisAngle()));
     }
 
     @Override
     public void receiveSignal(Signal s) {
-
     }
 
     public HashMap<IWorldObject, Double> getDataOfCameraSensor() {
