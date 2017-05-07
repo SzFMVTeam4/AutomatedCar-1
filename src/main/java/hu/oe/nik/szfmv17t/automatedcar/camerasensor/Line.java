@@ -7,6 +7,10 @@ public class Line {
     double slope;
     double yintercept;
 
+    public Line (double x, double y, Point.Double normal) {
+        this (x, y, x + normal.y, y - normal.x);
+    }
+
     public Line (Point.Double p1, Point.Double p2) {
         this(p1.x, p1.y, p2.x, p2.y);
     }

@@ -15,7 +15,7 @@ public class Path implements IDebugDrawer {
     }
 
     public void addPoint (double x, double y) {
-        points.add(new Point2D.Double(x, y));
+        points.add(new Point.Double(x, y));
     }
 
     public Point.Double getIntersectionPoint (Line line) {
@@ -30,7 +30,7 @@ public class Path implements IDebugDrawer {
 
             Point.Double intersection = l.getIntersectionPoint(line);
 
-            if (checkPointInSegment(intersection, p, prev)) {
+            if (intersection != null && checkPointInSegment(intersection, p, prev)) {
                 return intersection;
             }
 
@@ -40,7 +40,7 @@ public class Path implements IDebugDrawer {
         return null;
     }
 
-    private boolean checkPointInSegment (Point.Double point, Point2D.Double segment1, Point2D.Double segment2) {
+    private boolean checkPointInSegment (Point.Double point, Point.Double segment1, Point.Double segment2) {
         double minx = Math.min(segment1.x, segment2.x);
         double maxx = Math.max(segment1.x, segment2.x);
         double miny = Math.min(segment1.y, segment2.y);

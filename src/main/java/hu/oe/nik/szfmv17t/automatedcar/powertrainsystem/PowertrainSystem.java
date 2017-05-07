@@ -24,6 +24,8 @@ public class PowertrainSystem extends SystemComponent {
     public static final int ULTRASONIC_SENSOR_ID = 16;
     public static final int RADAR_SENSOR_ID = 17;
     public static final int CAMERA_SENSOR_ID = 18;
+    public static final int LANE_KEEPING_ID = 19;
+    public static final int LANE_KEEPING_SWITCH = 19;
     public static final int Modelling = 20;
     public static final int Physics = 30;
     public static final int Physics_Speed = 31;
