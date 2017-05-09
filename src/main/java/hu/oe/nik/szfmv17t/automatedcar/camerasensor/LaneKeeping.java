@@ -160,11 +160,18 @@ public class LaneKeeping extends SystemComponent implements IDebugDrawer {
             road = getPathFromCamera();
 
             pathDifference = calculatePathDifference();
-            double correction = Math.signum(pathDifference) * 5;
-            System.out.println(correction);
+            double correction = getCorrectionAngel (pathDifference);
+            System.out.println(correction + " " + pathDifference);
 
             VirtualFunctionBus.sendSignal(new Signal(LANE_KEEPING_ID, correction));
         }
+    }
+
+    private double getCorrectionAngel (double pathDifference) {
+        if (Math.abs(pathDifference) < 1)
+            return 0;
+
+        return Math.signum(pathDifference) * 5;
     }
 
     @Override
