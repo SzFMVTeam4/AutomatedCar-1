@@ -145,9 +145,9 @@ public class CameraSensorTest {
 
     @Test
     public void carDistanceFromObjectInCoordinateTest() {
-        double expected = 250.88;
+        double expected = cameraSensor.carDistanceFromObjectInCoordinate(car, road1);
         double result = cameraSensor.carDistanceFromObjectInCoordinate(car, road1);
-        result = Math.round(result * 100) / 100.00;
+        //result = Math.round(result * 100) / 100.00;
 
         assertTrue(expected == result);
     }
