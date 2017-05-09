@@ -33,6 +33,21 @@ public class CameraSensorController extends SystemComponent {
     //relevans objektumok es a kiszamolt tavolsag eltarolasa
     private HashMap<IWorldObject, Double> cameraSensorStoredData;
 
+    //az ut jobb oldali latomezo ellenorzesehez
+    private SignDetecting signDetecting;
+    private Triangle halfOfFieldView;
+    List<IWorldObject> halfSeenWorldObjects;
+    List<IWorldObject> halfRelevantObjects;
+    private HashMap<IWorldObject, Double> halfCameraSensorStoredData;
+
+    private HashMap<IWorldObject, Double> signObjects;
+    private IWorldObject closestSign;
+    private double valueOfSign;
+
+    public IWorldObject getClosestSign() {
+        return closestSign;
+    }
+
     public CameraSensorController(AutomatedCar car, World world) {
         this.car = car;
         this.cameraSensor = new CameraSensor(car);
@@ -44,18 +59,36 @@ public class CameraSensorController extends SystemComponent {
 
     @Override
     public void loop() {
-        VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
         fieldView = cameraSensor.getSensorFieldView(car);
         seenWorldObjects = world.checkSensorArea(fieldView);
         relevantObjects = cameraSensor.getRelevantWorldObjects(seenWorldObjects);
         cameraSensorStoredData = getDataOfCameraSensor(relevantObjects);
         //printOutInformation();
+        VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.CAMERA_SENSOR_ID, null));
 
         //Ennek nem itt kellene lennie
-        VirtualFunctionBus.sendSignal(new Signal (C_CARX, car.getCenterX()));
-        VirtualFunctionBus.sendSignal(new Signal (C_CARY, car.getCenterY()));
-        VirtualFunctionBus.sendSignal(new Signal (C_CARSPEED, car.getSpeed()));
-        VirtualFunctionBus.sendSignal(new Signal (C_CARANGLE, car.getAxisAngle()));
+        VirtualFunctionBus.sendSignal(new Signal(C_CARX, car.getCenterX()));
+        VirtualFunctionBus.sendSignal(new Signal(C_CARY, car.getCenterY()));
+        VirtualFunctionBus.sendSignal(new Signal(C_CARSPEED, car.getSpeed()));
+        VirtualFunctionBus.sendSignal(new Signal(C_CARANGLE, car.getAxisAngle()));
+        sendValueOfSign();
+    }
+
+    private void sendValueOfSign() {
+        halfOfFieldView = cameraSensor.getSensorHalfOfFieldView(car);
+        halfSeenWorldObjects = world.checkSensorArea(halfOfFieldView);
+        halfRelevantObjects = cameraSensor.getRelevantWorldObjects(halfSeenWorldObjects);
+        halfCameraSensorStoredData = getDataOfCameraSensor(halfRelevantObjects);
+        this.signDetecting = new SignDetecting(halfCameraSensorStoredData);
+
+        if (halfCameraSensorStoredData.size() > 0) {
+            signObjects = signDetecting.searchSigns(halfCameraSensorStoredData);
+            closestSign = signDetecting.findClosestSign(signObjects);
+            valueOfSign = signDetecting.getValueOfSign(getClosestSign());
+            if (valueOfSign > 0) {
+                VirtualFunctionBus.sendSignal(new Signal(PowertrainSystem.Visualisation_Sign_Value, (int) valueOfSign));
+            }
+        }
     }
 
     @Override
