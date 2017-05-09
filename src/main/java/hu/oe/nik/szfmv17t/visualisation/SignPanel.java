@@ -29,7 +29,7 @@ public class SignPanel extends JPanel {
 
     public SignPanel() {
         this.setPreferredSize(new Dimension(40, 50));
-        setBackground(Color.blue);
+        //setBackground(Color.blue);
         this.iWorldObject = cameraSensorController.getClosestSign();
     }
 
