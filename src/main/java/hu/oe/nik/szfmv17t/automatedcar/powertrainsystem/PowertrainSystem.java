@@ -3,7 +3,6 @@ package hu.oe.nik.szfmv17t.automatedcar.powertrainsystem;
 import hu.oe.nik.szfmv17t.automatedcar.SystemComponent;
 import hu.oe.nik.szfmv17t.automatedcar.bus.Signal;
 import hu.oe.nik.szfmv17t.automatedcar.hmi.AutoGearStates;
-import hu.oe.nik.szfmv17t.automatedcar.ultrasonicsensor.UltrasonicController;
 import hu.oe.nik.szfmv17t.physics.SpeedControl;
 import hu.oe.nik.szfmv17t.physics.SteeringControl;
 
@@ -16,6 +15,7 @@ public class PowertrainSystem extends SystemComponent {
     public static final int SMI_Gear = 12;
     public static final int SMI_SteeringWheel = 13;
     public static final int ULTRASONIC_SENSOR_ID = 14;
+    public static final int CAMERA_SENSOR_ID = 16;
     public static final int Modelling = 20;
     public static final int Physics = 30;
     public static final int Physics_Speed = 31;
@@ -26,14 +26,12 @@ public class PowertrainSystem extends SystemComponent {
     private SpeedControl speedControl;
     private SteeringControl steeringControl;
 
-
-    // input signals
-    private int gasPedal = 0;
-    private int brakePedal = 0;
+    // Output signals
+    // Only these are available trough getters
+    private int wheelState = 0;
 
     // Output signals
     // Only these are available trough getters
-    private double steeringAngle = 0;
 
     public PowertrainSystem(double height, double width, double carWeight) {
         super();
@@ -44,7 +42,7 @@ public class PowertrainSystem extends SystemComponent {
 
     @Override
     public void loop() {
-        //TODO write this
+        // TODO write this
     }
 
     @Override
@@ -64,18 +62,20 @@ public class PowertrainSystem extends SystemComponent {
                 this.speedControl.setAutoGearState(gear);
                 break;
             case SMI_SteeringWheel:
-                this.steeringAngle = this.steeringControl.calculateSteeringAngle((int) s.getData());
+                this.wheelState = (int) s.getData();
                 break;
             case ULTRASONIC_SENSOR_ID:
-                //System.out.println("Ultrasonic sensor: " + s.getData());
+                // System.out.println("Ultrasonic sensor: " + s.getData());
+                break;
+            case CAMERA_SENSOR_ID:
                 break;
             default:
                 // ignore other signals
         }
     }
 
-    public double getSteeringAngle() {
-        return steeringAngle;
+    public double getSteeringAngle(double carVelocity) {
+        return steeringControl.calculateAngle(carVelocity, this.wheelState);
     }
 
     public double getVelocity() {

@@ -32,7 +32,6 @@ public class FrameComposer {
         return instance;
     }
 
-
     public List<CameraObject> composeFrame() {
         List<IWorldObject> worldObjects = world.getWorld();
 
