@@ -34,7 +34,7 @@ public class SignDetectingTest {
     }
 
 
-    private void init() {
+    private void init() {/*
         road1 = new Road(0, 0, 1, 1, 0, 0, "road_2lane_straight.png", 0, 1, 1, 1);
         road2 = new Road(10, 10, 1, 1, 0, 0, "road_2lane_straight.png", 0, 1, 1, 1);
         turn1 = new Turn(0, 2, 1, 1, 0d, 0, "road_2lane_45left.png", 0, 1, 1, 1);
@@ -48,7 +48,7 @@ public class SignDetectingTest {
         cameraSensorStoredData.put(sign1, 1.0);
         cameraSensorStoredData.put(sign2, 3.0);
         cameraSensorStoredData.put(sign3, 1.0);
-    }
+    */}
 
     @Test
     public void searchSignTest() {
