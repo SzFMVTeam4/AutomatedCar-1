@@ -108,17 +108,6 @@ public class CourseDisplay implements Runnable, ActionListener {
 	public void run() {
 
 	}
-    @Override
-    public void run() {
-/*int refreshRate = 1000 / Config.FPS;
-			try {
-				Drawer.getDrawer(world).DrawFrametoPanel(worldObjectsJPanel,world,mainPanel);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			refreshFrame();
-			*/
-    }
 
 	public Drawer getDrawer () {
 		return drawer;
